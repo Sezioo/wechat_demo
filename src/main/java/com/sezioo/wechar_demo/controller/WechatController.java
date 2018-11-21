@@ -1,25 +1,32 @@
 package com.sezioo.wechar_demo.controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.startup.FailedContext;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sezioo.wechar_demo.dto.BaseMessage;
 import com.sezioo.wechar_demo.dto.TextMessage;
 import com.sezioo.wechar_demo.param.LinkParam;
 import com.sezioo.wechar_demo.property.WechatProperty;
+import com.sezioo.wechar_demo.service.MediaService;
 import com.sezioo.wechar_demo.util.SHA1Utils;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
 import com.sezioo.wechar_demo.util.XmlUtils;
@@ -34,6 +41,14 @@ public class WechatController {
 	@Autowired
 	private WechatProperty wechatProperty;
 	
+	@Autowired
+	private MediaService mediaService;
+	
+	/**
+	 * get请求用于服务器连接验证
+	 * @param param
+	 * @return
+	 */
 	@RequestMapping(value = "/link", method = RequestMethod.GET)
 	@ResponseBody
 	public String link(LinkParam param) {
@@ -60,7 +75,11 @@ public class WechatController {
 			return "fail";
 		}
 	}
-	
+	/**
+	 * 获取accesstoken
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("/accessToken")
 	@ResponseBody
 	public String getAccessToken() throws Exception {
@@ -77,6 +96,12 @@ public class WechatController {
 		return accessToken;
 	}
 	
+	/**
+	 * post请求由于接受用户消息
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unused")
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
 	@ResponseBody
@@ -103,5 +128,45 @@ public class WechatController {
 		String xml = XmlUtils.beanToXml(responseMessage);
 		PrintWriter printWriter = response.getWriter();
 		printWriter.println(xml);
+	}
+	
+	/**
+	 * 上传素材
+	 * @param accessToken
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/fileUpload")
+	@ResponseBody
+	public String fileUpload(@RequestParam String accessToken) throws Exception {
+		File file = new File("C:\\Users\\qinpeng\\Pictures\\test.jpg");
+		return mediaService.mediaUpload(file, "image", accessToken);
+	}
+	
+	/**
+	 * 下载素材
+	 * @param param
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/fileDownload")
+	public void fileDownload(@RequestParam Map<String, String> param,HttpServletResponse response) throws Exception {
+		if(MapUtils.isEmpty(param))
+			return;
+		String mediaId = param.get("mediaId");
+		String accessToken = param.get("accessToken");
+		InputStream inputStream = mediaService.mediaDownload(mediaId, accessToken);
+		OutputStream outputStream = response.getOutputStream();
+		byte[] arr = new byte[1024];
+		int len = 0;
+		while((len = inputStream.read(arr))!=-1) {
+			outputStream.write(arr, 0, len);
+			System.out.println(len);
+			if(len<1024)
+				break;
+		}
+		outputStream.flush();
+		outputStream.close();
+		inputStream.close();
 	}
 }

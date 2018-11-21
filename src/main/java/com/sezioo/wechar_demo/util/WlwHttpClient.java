@@ -1,5 +1,7 @@
 package com.sezioo.wechar_demo.util;
 
+import java.io.File;
+import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -29,6 +31,8 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -38,6 +42,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 
 public class WlwHttpClient {
 	private CookieStore cookieStore = new BasicCookieStore();
@@ -393,6 +398,50 @@ public class WlwHttpClient {
 				}
 			}
 		}
+		
+		//获取流
+		public InputStream getStream(String url, Map<String, String> headers) throws Exception {
+			if (httpCilent == null) {
+				throw httpCilentException;
+			}
+			HttpGet httpGet = new HttpGet(url);
+			try {
+				httpGet.setConfig(getRequestConfig);
+				for (String key : headers.keySet()) {
+					httpGet.addHeader(key, headers.get(key));
+				}
+				;
+
+				HttpResponse httpResponse = httpCilent.execute(httpGet);
+				if (httpResponse != null) {
+					int code = httpResponse.getStatusLine().getStatusCode();
+					if (code == 302) {
+						Header header = httpResponse.getFirstHeader("location");
+						String newuri = header.getValue();
+						return getStream(newuri, headers);
+					}
+				}
+				InputStream inputStream = httpResponse.getEntity().getContent();
+				return inputStream;
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				try {
+					httpGet.abort();
+				} catch (Exception e) {
+				}
+			}
+		}
+		
+		//发送文件
+		public String postFile(String url, File file) throws Exception {
+			MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+			multipartEntityBuilder.addBinaryBody("file", file);
+			HttpEntity httpEntity = multipartEntityBuilder.build();
+			Map<String, String> headers = Maps.newHashMap(); 
+			return post(url, httpEntity, headers);
+		}
+		
 		
 	
 	
