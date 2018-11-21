@@ -1,7 +1,10 @@
 package com.sezioo.wechar_demo.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -43,6 +47,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.sezioo.wechar_demo.commons.ResponseHolder;
 
 public class WlwHttpClient {
 	private CookieStore cookieStore = new BasicCookieStore();
@@ -400,11 +405,13 @@ public class WlwHttpClient {
 		}
 		
 		//获取流
-		public InputStream getStream(String url, Map<String, String> headers) throws Exception {
+		public File getFile(String url, Map<String, String> headers) throws Exception {
 			if (httpCilent == null) {
 				throw httpCilentException;
 			}
 			HttpGet httpGet = new HttpGet(url);
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
 			try {
 				httpGet.setConfig(getRequestConfig);
 				for (String key : headers.keySet()) {
@@ -418,20 +425,98 @@ public class WlwHttpClient {
 					if (code == 302) {
 						Header header = httpResponse.getFirstHeader("location");
 						String newuri = header.getValue();
-						return getStream(newuri, headers);
+						return getFile(newuri, headers);
 					}
 				}
-				InputStream inputStream = httpResponse.getEntity().getContent();
-				return inputStream;
+				HttpEntity entity = httpResponse.getEntity();
+				
+				String path = WlwHttpClient.class.getResource("/").getPath();
+				path = path + File.separator + "pictrues" ;
+				File fileDir = new File(path);
+				if(!fileDir.exists())
+					fileDir.mkdirs();
+				String filePath = UUID.randomUUID().toString()+".jpg";
+				File tempFile = new File(fileDir, filePath);
+				if(!tempFile.exists())
+					tempFile.createNewFile();
+				
+				inputStream = entity.getContent();
+				outputStream = new FileOutputStream(tempFile); 
+				byte[] arr = new byte[1024];
+				int len = 0;
+				while((len = inputStream.read(arr))!=-1) {
+					System.out.println("len:"+len);
+					outputStream.write(arr, 0, len);
+				}
+				outputStream.flush();
+				return tempFile;
 			} catch (Exception e) {
 				throw e;
 			} finally {
+				if(inputStream != null) {
+					inputStream.close();
+				}
+				if(outputStream != null) {
+					outputStream.close();
+				}
 				try {
 					httpGet.abort();
 				} catch (Exception e) {
 				}
 			}
 		}
+		
+		//获取流
+				public void getFile1(String url, Map<String, String> headers) throws Exception {
+					if (httpCilent == null) {
+						throw httpCilentException;
+					}
+					HttpGet httpGet = new HttpGet(url);
+					InputStream inputStream = null;
+					OutputStream outputStream = null;
+					try {
+						httpGet.setConfig(getRequestConfig);
+						for (String key : headers.keySet()) {
+							httpGet.addHeader(key, headers.get(key));
+						}
+						;
+
+						HttpResponse httpResponse = httpCilent.execute(httpGet);
+						if (httpResponse != null) {
+							int code = httpResponse.getStatusLine().getStatusCode();
+							if (code == 302) {
+								Header header = httpResponse.getFirstHeader("location");
+								String newuri = header.getValue();
+								getFile1(newuri, headers);//TODO:
+							}
+						}
+						HttpEntity entity = httpResponse.getEntity();
+						
+						
+						inputStream = entity.getContent();
+						outputStream = ResponseHolder.getStream(); 
+						byte[] arr = new byte[1024];
+						int len = 0;
+						while((len = inputStream.read(arr))!=-1) {
+							System.out.println("len:"+len);
+							outputStream.write(arr, 0, len);
+						}
+					} catch (Exception e) {
+						throw e;
+					} finally {
+						if(inputStream != null) {
+							inputStream.close();
+						}
+						if(outputStream != null) {
+							outputStream.close();
+						}
+						try {
+							httpGet.abort();
+						} catch (Exception e) {
+						}
+					}
+				}
+		
 		
 		//发送文件
 		public String postFile(String url, File file) throws Exception {

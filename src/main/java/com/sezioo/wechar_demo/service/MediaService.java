@@ -8,12 +8,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
 
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice.This;
 
 @Service
 @Slf4j
@@ -31,14 +33,23 @@ public class MediaService {
 		return mediaReturn;
 	}
 	
-	public InputStream mediaDownload(String mediaId,String accessToken) throws Exception {
+	public File mediaDownload(String mediaId,String accessToken) throws Exception {
 		String url = String.format(DOWNLOAD_URL, accessToken,mediaId);
 		log.info("download media url:{}",url);
 		WlwHttpClient httpClient = new WlwHttpClient(true);
 		Map<String, String> headers = Maps.newHashMap();
-		InputStream inputStream = httpClient.getStream(url, headers);
+		File file = httpClient.getFile(url, headers);
 //		File file = new File("C:\\Users\\qinpeng\\Pictures\\wechat.jpg");
-		return inputStream;
+		return file;
+	}
+	
+	public void fileDownload(String mediaId,String accessToken) throws Exception {
+		String url = String.format(DOWNLOAD_URL, accessToken,mediaId);
+		log.info("download media url:{}",url);
+		WlwHttpClient httpClient = new WlwHttpClient(true);
+		Map<String, String> headers = Maps.newHashMap();
+		httpClient.getFile1(url, headers);
+//		File file = new File("C:\\Users\\qinpeng\\Pictures\\wechat.jpg");
 	}
 	
 	public static File downloadMedia(String fileName, String accessToken, String mediaId) {
@@ -93,9 +104,10 @@ public class MediaService {
     }
 	
 	public static void main(String[] args) {
-		MediaService.downloadMedia("C:\\Users\\qinpeng\\Pictures\\test1.jpg",
+		/*MediaService.downloadMedia("C:\\Users\\qinpeng\\Pictures\\test1.jpg",
 				"15_S4c6_EEIZYMWdMdFsEq4l_BcaR6D35qY6Wfqkr_-e86b32CtfurpVXWgLKz9K_rrTOi7sklrfVmeEWzL0lioys6Dld_jhXqaVIGy3Qly3wWO3BNRGfI4DSQ8QHoOh4PLtOycI4vgkfZXxu0TGBWeAGAJEZ",
-				"1oKuI1iGyBW528UsJH_2VGEQABH_Dh_SNKrERTnpjwuTPiwV8nrJolkRKAlUoHpb");
+				"1oKuI1iGyBW528UsJH_2VGEQABH_Dh_SNKrERTnpjwuTPiwV8nrJolkRKAlUoHpb");*/
+		System.out.println(MediaService.class.getResource("/").getPath());
 	}
 
 }
