@@ -16,8 +16,10 @@ import lombok.ToString;
 @ToString
 @Builder
 @XStreamAlias("xml")
-public class TextMessage extends BaseMessage{
+public class ImageMessageResponse extends BaseResponseMessage {
 	
-	@XStreamAlias("Content")
-	private String content;
+	@XStreamAlias("Image")
+	private Image image ;
+	
 }
+

@@ -3,21 +3,16 @@ package com.sezioo.wechar_demo.dto;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Builder
-@XStreamAlias("xml")
-public class TextMessage extends BaseMessage{
+@AllArgsConstructor
+public class Image{
 	
-	@XStreamAlias("Content")
-	private String content;
+	@XStreamAlias("MediaId")
+	private String mediaId;
 }

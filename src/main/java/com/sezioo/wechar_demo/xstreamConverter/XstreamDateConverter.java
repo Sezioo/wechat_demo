@@ -19,8 +19,12 @@ public class XstreamDateConverter implements SingleValueConverter {
 
 	@Override
 	public String toString(Object obj) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return format.format((Date)obj);
+		Date date = (Date) obj;
+		if(obj != null) {
+			long time = date.getTime();
+			return String.valueOf(time);
+		}
+		return null;
 	}
 
 	@Override

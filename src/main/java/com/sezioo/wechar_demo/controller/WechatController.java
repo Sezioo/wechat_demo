@@ -26,10 +26,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sezioo.wechar_demo.commons.ResponseHolder;
+import com.sezioo.wechar_demo.dto.BaseMessage;
 import com.sezioo.wechar_demo.dto.TextMessage;
 import com.sezioo.wechar_demo.param.LinkParam;
 import com.sezioo.wechar_demo.property.WechatProperty;
 import com.sezioo.wechar_demo.service.MediaService;
+import com.sezioo.wechar_demo.service.MessageService;
 import com.sezioo.wechar_demo.util.SHA1Utils;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
 import com.sezioo.wechar_demo.util.XmlUtils;
@@ -46,6 +48,9 @@ public class WechatController {
 	
 	@Autowired
 	private MediaService mediaService;
+	
+	@Autowired
+	private MessageService messageService;
 	
 	/**
 	 * get请求用于服务器连接验证
@@ -119,16 +124,8 @@ public class WechatController {
 		}
 		String message = messageBuilder.toString();
 		log.info("接受到用户信息：{}",message);
-		TextMessage receiveMessage = XmlUtils.xmlToBean(TextMessage.class, message);
-		log.info(message);
-		
-		TextMessage responseMessage = new TextMessage();
-		BeanUtils.copyProperties(receiveMessage, responseMessage);
-		responseMessage.setFromUserName(receiveMessage.getToUserName());
-		responseMessage.setToUserName(receiveMessage.getFromUserName());
-		responseMessage.setContent("测试成功！");
-		
-		String xml = XmlUtils.beanToXml(responseMessage);
+		String xml = messageService.messageProcess(message);
+		log.info("返回用户信息：{}",xml);
 		PrintWriter printWriter = response.getWriter();
 		printWriter.println(xml);
 	}
@@ -153,26 +150,6 @@ public class WechatController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/fileDownload")
-	public void fileDownload(@RequestParam Map<String, String> param,HttpServletResponse response) throws Exception {
-		if(MapUtils.isEmpty(param))
-			return;
-		String mediaId = param.get("mediaId");
-		String accessToken = param.get("accessToken");
-		File file = mediaService.mediaDownload(mediaId, accessToken);
-		InputStream inputStream = new FileInputStream(file);
-		OutputStream outputStream = response.getOutputStream();
-		byte[] arr = new byte[1024];
-		int len = 0;
-		while((len = inputStream.read(arr))!=-1) {
-			outputStream.write(arr, 0, len);
-			System.out.println(len);
-		}
-		outputStream.flush();
-		outputStream.close();
-		inputStream.close();
-	}
-	
-	@RequestMapping("/getFile")
 	public void getFile(@RequestParam Map<String, String> param,HttpServletResponse response) throws Exception {
 		if(MapUtils.isEmpty(param))
 			return;

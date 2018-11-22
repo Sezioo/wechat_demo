@@ -17,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BaseMessage {
+public class BaseResponseMessage {
 	
 	@XStreamAlias("ToUserName")
 	protected String toUserName;
@@ -32,6 +32,4 @@ public class BaseMessage {
 	@XStreamAlias("MsgType")
 	protected String msgType;
 	
-	@XStreamAlias("MsgId")
-	protected String msgId;
 }
