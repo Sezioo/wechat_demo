@@ -17,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BaseResponseMessage {
+public class BaseMessageResponse {
 	
 	@XStreamAlias("ToUserName")
 	protected String toUserName;
