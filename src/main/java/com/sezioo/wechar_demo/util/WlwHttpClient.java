@@ -147,7 +147,7 @@ public class WlwHttpClient {
 	public String post(String url, String body) throws Exception {
 		StringEntity entity = null;
 		if (body != null) {
-			entity = new StringEntity(body);
+			entity = new StringEntity(body,"UTF-8");
 		}
 		return post(url, entity, urlencodedHeader);
 	}

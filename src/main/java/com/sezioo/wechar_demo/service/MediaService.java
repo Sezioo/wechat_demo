@@ -8,9 +8,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.sezioo.wechar_demo.util.RedisUtil;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,11 @@ public class MediaService {
 	public static String UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s";
 	public static String DOWNLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s";
 	
-	public String mediaUpload(File file,String type,String accessToken) throws Exception {
+	@Autowired
+	private RedisUtil redisUtil;
+	
+	public String mediaUpload(File file,String type) throws Exception {
+		String accessToken = (String) redisUtil.get("wechat_access_token");
 		String url = String.format(UPLOAD_URL,accessToken,type);
 		log.info("media upload url:{}",url);
 		WlwHttpClient httpClient = new WlwHttpClient(true);

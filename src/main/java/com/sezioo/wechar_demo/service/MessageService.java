@@ -43,11 +43,16 @@ public class MessageService {
 		BeanUtils.copyProperties(receiveMessage, responseMessage);
 		responseMessage.setFromUserName(receiveMessage.getToUserName());
 		responseMessage.setToUserName(receiveMessage.getFromUserName());
-		responseMessage.setContent("测试成功！");
+		responseMessage.setContent("发送图片有惊喜！");
 		String xml = XmlUtils.beanToXml(responseMessage);
 		return xml;
 	}
 	
+	/**
+	 * 处理图片信息
+	 * @param message
+	 * @return
+	 */
 	public String imageMessageProcess(String message) {
 		log.info("接受到图片消息：{}",message);
 		ImageMessage receiveMessage = XmlUtils.xmlToBean(ImageMessage.class, message);
@@ -56,7 +61,7 @@ public class MessageService {
 		responseMessage.setToUserName(receiveMessage.getFromUserName());
 		responseMessage.setCreateTime(new Date());
 		responseMessage.setMsgType("image");
-		responseMessage.setImage(new Image("6VOx3arm9exdolBVjPV4YLyYHFkQ_G6pHeEky7iAFlrbdeFc-oge5yViuzFAeqr3"));;
+		responseMessage.setImage(new Image("A28pKdW3HxVqcxYvxdldSHdWC4KVHhJXyRlErRoMngCorcaeZAGFfl5Llk4ifnGO"));;
 		String xml = XmlUtils.beanToXml(responseMessage);
 		return xml;
 	}

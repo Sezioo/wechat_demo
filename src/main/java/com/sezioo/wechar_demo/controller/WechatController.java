@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sezioo.wechar_demo.commons.ResponseHolder;
 import com.sezioo.wechar_demo.dto.BaseMessage;
 import com.sezioo.wechar_demo.dto.TextMessage;
@@ -32,6 +33,7 @@ import com.sezioo.wechar_demo.param.LinkParam;
 import com.sezioo.wechar_demo.property.WechatProperty;
 import com.sezioo.wechar_demo.service.MediaService;
 import com.sezioo.wechar_demo.service.MessageService;
+import com.sezioo.wechar_demo.service.WechatBottonService;
 import com.sezioo.wechar_demo.util.SHA1Utils;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
 import com.sezioo.wechar_demo.util.XmlUtils;
@@ -51,6 +53,9 @@ public class WechatController {
 	
 	@Autowired
 	private MessageService messageService;
+	
+	@Autowired
+	private WechatBottonService wechatBottonService;
 	
 	/**
 	 * get请求用于服务器连接验证
@@ -138,9 +143,9 @@ public class WechatController {
 	 */
 	@RequestMapping("/fileUpload")
 	@ResponseBody
-	public String fileUpload(@RequestParam String accessToken) throws Exception {
-		File file = new File("C:\\Users\\qinpeng\\Pictures\\test.jpg");
-		return mediaService.mediaUpload(file, "image", accessToken);
+	public String fileUpload() throws Exception {
+		File file = new File("C:\\Users\\qinpeng\\Pictures\\test2.jpg");
+		return mediaService.mediaUpload(file, "image");
 	}
 	
 	/**
@@ -158,5 +163,11 @@ public class WechatController {
 		mediaService.fileDownload(mediaId, accessToken);
 		OutputStream outputStream = ResponseHolder.getStream();
 		outputStream.flush();
+	}
+	
+	@RequestMapping("/addMenu")
+	@ResponseBody
+	public String addMenu() {
+		return wechatBottonService.addMenu();
 	}
 }
