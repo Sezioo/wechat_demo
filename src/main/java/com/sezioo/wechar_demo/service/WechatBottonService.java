@@ -1,6 +1,8 @@
 package com.sezioo.wechar_demo.service;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WechatBottonService {
 	
 	private static String URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s";
+	private static String AUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=STATE#wechat_redirect";
 	
 	@Autowired
 	private WechatProperty wechatProperty;
@@ -33,13 +36,17 @@ public class WechatBottonService {
 	private RedisUtil redisUtil;
 	
 	
-	public String addMenu() {
+	public String addMenu() throws UnsupportedEncodingException {
 		
 		String accessToken = (String) redisUtil.get("wechat_access_token");
 		String url = String.format(URL, accessToken);
 		WlwHttpClient httpClient = new WlwHttpClient(true);
 		
-		WechatButton wechatButton = WechatButton.builder().type("view").url("http://www.soso.com/").name("菜单").build();
+		String redirectUrl = "http://ikyxuf.natappfree.cc/wechat/pageAuthRedirect";
+		String encodeRedirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
+		String urlMenu = String.format(AUTH_URL,wechatProperty.getAppId(),encodeRedirectUrl,"snsapi_userinfo" );
+		
+		WechatButton wechatButton = WechatButton.builder().type("view").url(urlMenu).name("菜单").build();
 		ArrayList<WechatButton> buttons = Lists.newArrayList(wechatButton);
 		HashMap<Object, Object> buttonMap = Maps.newHashMap();
 		buttonMap.put("button", buttons);

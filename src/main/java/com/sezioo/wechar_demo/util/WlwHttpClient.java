@@ -108,7 +108,7 @@ public class WlwHttpClient {
 		StatusLine statusLine = response.getStatusLine();
 		int code = statusLine.getStatusCode();
 		if ((checkCode != null) && (checkCode.contains(code))) {
-			return EntityUtils.toString(response.getEntity());
+			return EntityUtils.toString(response.getEntity(),"UTF-8");
 		} else {
 			throw new Exception(statusLine.toString());
 			// throw new Exception( statusLine.getReasonPhrase());

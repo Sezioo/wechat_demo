@@ -45,5 +45,17 @@ public class JsonMapper {
             return null;
         }
     }
+    
+    public static <T> T parse(String src,Class<T> clazz) {
+    	 if (src == null || clazz == null) {
+             return null;
+         }
+    	 try {
+    		 return (T)objectMapper.readValue(src, clazz);
+		} catch (Exception e) {
+			 log.warn("parse String to Object exception, String:{}, Class<T>:{}, error:{}", src, clazz.getName(), e);
+	         return null;
+		}
+    }
 
 }

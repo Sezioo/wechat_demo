@@ -2,41 +2,38 @@ package com.sezioo.wechar_demo.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.http.HttpEntity;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sezioo.wechar_demo.commons.ResponseHolder;
-import com.sezioo.wechar_demo.dto.BaseMessage;
-import com.sezioo.wechar_demo.dto.TextMessage;
+import com.sezioo.wechar_demo.dto.WechatUserInfo;
+import com.sezioo.wechar_demo.dto.WechatUserToken;
 import com.sezioo.wechar_demo.param.LinkParam;
 import com.sezioo.wechar_demo.property.WechatProperty;
 import com.sezioo.wechar_demo.service.MediaService;
 import com.sezioo.wechar_demo.service.MessageService;
+import com.sezioo.wechar_demo.service.WechatAuthService;
 import com.sezioo.wechar_demo.service.WechatBottonService;
+import com.sezioo.wechar_demo.util.JsonMapper;
 import com.sezioo.wechar_demo.util.SHA1Utils;
 import com.sezioo.wechar_demo.util.WlwHttpClient;
-import com.sezioo.wechar_demo.util.XmlUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,6 +53,9 @@ public class WechatController {
 	
 	@Autowired
 	private WechatBottonService wechatBottonService;
+	
+	@Autowired
+	private WechatAuthService wechatAuthService;
 	
 	/**
 	 * get请求用于服务器连接验证
@@ -167,7 +167,31 @@ public class WechatController {
 	
 	@RequestMapping("/addMenu")
 	@ResponseBody
-	public String addMenu() {
+	public String addMenu() throws UnsupportedEncodingException {
 		return wechatBottonService.addMenu();
 	}
+	
+	/**
+	 * 微信页面授权
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("pageAuth")
+	@ResponseBody
+	public JSONObject pageAuth() throws Exception {
+		log.info("进入微信页面授权");
+		JSONObject jsonObject = wechatAuthService.pageAuth();
+		log.info("微信页面授权成功");
+		return jsonObject;
+	}
+	
+	@RequestMapping("pageAuthRedirect")
+	@ResponseBody
+	public String pageAuthRedirect(@RequestParam(name="code") String code,@RequestParam("state") String state) throws Exception {
+		log.info("pageAuthRedirect,code={},state={}",code,state);
+		WechatUserToken userGrantToken = wechatAuthService.getUserGrantToken(code, "authorization_code");
+		WechatUserInfo userInfo = wechatAuthService.getUserInfo(userGrantToken.getOpenId());
+		return JsonMapper.obj2String(userInfo);
+	}
+	
 }
