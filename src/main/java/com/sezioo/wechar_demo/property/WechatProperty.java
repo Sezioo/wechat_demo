@@ -14,4 +14,7 @@ public class WechatProperty {
 	private String appId;
 	private String appsecret;
 	private String token;
+	private String authUrl;
+	private String authRedirectUrl;
+	
 }

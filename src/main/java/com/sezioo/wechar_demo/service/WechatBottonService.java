@@ -42,10 +42,11 @@ public class WechatBottonService {
 		String url = String.format(URL, accessToken);
 		WlwHttpClient httpClient = new WlwHttpClient(true);
 		
-		String redirectUrl = "http://ikyxuf.natappfree.cc/wechat/pageAuthRedirect";
+		/*String redirectUrl = "http://ikyxuf.natappfree.cc/wechat/pageAuthRedirect";
 		String encodeRedirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
-		String urlMenu = String.format(AUTH_URL,wechatProperty.getAppId(),encodeRedirectUrl,"snsapi_userinfo" );
+		String urlMenu = String.format(AUTH_URL,wechatProperty.getAppId(),encodeRedirectUrl,"snsapi_userinfo" );*/
 		
+		String urlMenu = "http://rmjbdz.natappfree.cc/wechat/index";
 		WechatButton wechatButton = WechatButton.builder().type("view").url(urlMenu).name("菜单").build();
 		ArrayList<WechatButton> buttons = Lists.newArrayList(wechatButton);
 		HashMap<Object, Object> buttonMap = Maps.newHashMap();

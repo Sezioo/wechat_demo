@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -15,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sezioo.wechar_demo.commons.ResponseHolder;
@@ -185,6 +186,13 @@ public class WechatController {
 		return jsonObject;
 	}
 	
+	/**
+	 * 微信授权跳转
+	 * @param code
+	 * @param state
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("pageAuthRedirect")
 	@ResponseBody
 	public String pageAuthRedirect(@RequestParam(name="code") String code,@RequestParam("state") String state) throws Exception {
@@ -194,4 +202,11 @@ public class WechatController {
 		return JsonMapper.obj2String(userInfo);
 	}
 	
+	@RequestMapping("/index")
+	public String index(Model model) throws UnsupportedEncodingException {
+		String encodeRedirectUrl = URLEncoder.encode(wechatProperty.getAuthRedirectUrl(), "UTF-8");
+		String urlMenu = String.format(wechatProperty.getAuthUrl(),wechatProperty.getAppId(),encodeRedirectUrl,"snsapi_userinfo" );
+		model.addAttribute("redirectUrl", urlMenu);
+		return "index";
+	}
 }
