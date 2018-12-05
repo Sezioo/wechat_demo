@@ -3,12 +3,14 @@ package com.sezioo.wechar_demo.service;
 import java.util.Date;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sezioo.wechar_demo.dto.Image;
 import com.sezioo.wechar_demo.dto.ImageMessage;
 import com.sezioo.wechar_demo.dto.ImageMessageResponse;
 import com.sezioo.wechar_demo.dto.TextMessage;
+import com.sezioo.wechar_demo.util.RedisUtil;
 import com.sezioo.wechar_demo.util.XmlUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class MessageService {
+	
+	@Autowired
+	private RedisUtil redisUtil;
 
 	public String messageProcess(String message) {
 		String xml = "";
@@ -61,7 +66,8 @@ public class MessageService {
 		responseMessage.setToUserName(receiveMessage.getFromUserName());
 		responseMessage.setCreateTime(new Date());
 		responseMessage.setMsgType("image");
-		responseMessage.setImage(new Image("A28pKdW3HxVqcxYvxdldSHdWC4KVHhJXyRlErRoMngCorcaeZAGFfl5Llk4ifnGO"));;
+		String mediaId = (String)redisUtil.get("temp_media_id");
+		responseMessage.setImage(new Image(mediaId));;
 		String xml = XmlUtils.beanToXml(responseMessage);
 		return xml;
 	}

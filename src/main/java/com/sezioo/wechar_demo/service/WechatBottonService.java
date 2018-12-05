@@ -46,7 +46,7 @@ public class WechatBottonService {
 		String encodeRedirectUrl = URLEncoder.encode(redirectUrl, "UTF-8");
 		String urlMenu = String.format(AUTH_URL,wechatProperty.getAppId(),encodeRedirectUrl,"snsapi_userinfo" );*/
 		
-		String urlMenu = "http://rmjbdz.natappfree.cc/wechat/index";
+		String urlMenu = wechatProperty.getMenuUrl();
 		WechatButton wechatButton = WechatButton.builder().type("view").url(urlMenu).name("菜单").build();
 		ArrayList<WechatButton> buttons = Lists.newArrayList(wechatButton);
 		HashMap<Object, Object> buttonMap = Maps.newHashMap();

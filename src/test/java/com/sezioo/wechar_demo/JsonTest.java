@@ -1,5 +1,7 @@
 package com.sezioo.wechar_demo;
 
+import org.junit.Test;
+
 import com.sezioo.wechar_demo.dto.WechatUserInfo;
 import com.sezioo.wechar_demo.dto.WechatUserToken;
 import com.sezioo.wechar_demo.util.JsonMapper;
@@ -13,5 +15,11 @@ public class JsonTest {
 		
 		WechatUserInfo wechatUserToken = JsonMapper.parse(jsonStr, WechatUserInfo.class);
 		System.out.println(JsonMapper.obj2String(wechatUserToken));
+	}
+	
+	@Test
+	public void test() {
+		String path = this.getClass().getResource("/").getPath();
+		System.out.println(path);
 	}
 }

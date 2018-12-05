@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -145,7 +146,9 @@ public class WechatController {
 	@RequestMapping("/fileUpload")
 	@ResponseBody
 	public String fileUpload() throws Exception {
-		File file = new File("C:\\Users\\qinpeng\\Pictures\\test2.jpg");
+		String path = this.getClass().getResource("/").getPath();
+		String filePath = path + File.separator + "images" + File.separator + "test1.jpg";
+		File file = new File(filePath);
 		return mediaService.mediaUpload(file, "image");
 	}
 	
