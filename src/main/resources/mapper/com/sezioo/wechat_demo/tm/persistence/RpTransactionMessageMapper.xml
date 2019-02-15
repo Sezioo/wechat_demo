@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sezioo.wechat_demo.tm.dao.RpTransactionMessageMapper">
+  <resultMap id="BaseResultMap" type="com.sezioo.wechat_demo.tm.entity.RpTransactionMessage">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="editor" jdbcType="VARCHAR" property="editor" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="message_id" jdbcType="VARCHAR" property="messageId" />
+    <result column="message_data_type" jdbcType="VARCHAR" property="messageDataType" />
+    <result column="consumer_queue" jdbcType="VARCHAR" property="consumerQueue" />
+    <result column="message_send_times" jdbcType="SMALLINT" property="messageSendTimes" />
+    <result column="areadly_dead" jdbcType="VARCHAR" property="areadlyDead" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="field1" jdbcType="VARCHAR" property="field1" />
+    <result column="field2" jdbcType="VARCHAR" property="field2" />
+    <result column="field3" jdbcType="VARCHAR" property="field3" />
+    <result column="message_body" jdbcType="LONGVARCHAR" property="messageBody" />
+  </resultMap>
+</mapper>
