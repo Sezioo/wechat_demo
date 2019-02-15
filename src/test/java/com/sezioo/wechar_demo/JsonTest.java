@@ -2,9 +2,9 @@ package com.sezioo.wechar_demo;
 
 import org.junit.Test;
 
-import com.sezioo.wechar_demo.dto.WechatUserInfo;
-import com.sezioo.wechar_demo.dto.WechatUserToken;
-import com.sezioo.wechar_demo.util.JsonMapper;
+import com.sezioo.wechat_demo.dto.WechatUserInfo;
+import com.sezioo.wechat_demo.dto.WechatUserToken;
+import com.sezioo.wechat_demo.util.JsonMapper;
 
 public class JsonTest {
 
