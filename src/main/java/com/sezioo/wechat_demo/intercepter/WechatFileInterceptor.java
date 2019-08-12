@@ -11,6 +11,11 @@ import com.sezioo.wechat_demo.commons.ResponseHolder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+/**
+ * 上传图片作为素材到微信服务器
+ * @author qinpeng
+ *
+ */
 public class WechatFileInterceptor implements HandlerInterceptor {
 
 	@Override

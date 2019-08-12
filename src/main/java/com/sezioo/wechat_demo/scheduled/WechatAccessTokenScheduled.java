@@ -21,7 +21,7 @@ public class WechatAccessTokenScheduled {
 	@Autowired
 	private RedisUtil redisUtil;
 	
-	@Scheduled(fixedRate = 1000*60*90)
+//	@Scheduled(fixedRate = 1000*60*90)
 	public void getWechatAccessToken() {
 		try {
 			WlwHttpClient httpClient = new WlwHttpClient();

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.UUIDGenerator;
 import com.sezioo.wechat_demo.commons.ResponseHolder;
 import com.sezioo.wechat_demo.dto.WechatUserInfo;
 import com.sezioo.wechat_demo.dto.WechatUserToken;
@@ -33,11 +33,15 @@ import com.sezioo.wechat_demo.service.MediaService;
 import com.sezioo.wechat_demo.service.MessageService;
 import com.sezioo.wechat_demo.service.WechatAuthService;
 import com.sezioo.wechat_demo.service.WechatBottonService;
+import com.sezioo.wechat_demo.tm.entity.RpTransactionMessage;
+import com.sezioo.wechat_demo.tm.service.RpTransactionMessageService;
 import com.sezioo.wechat_demo.util.JsonMapper;
 import com.sezioo.wechat_demo.util.SHA1Utils;
+import com.sezioo.wechat_demo.util.UUIDGenerateUtils;
 import com.sezioo.wechat_demo.util.WlwHttpClient;
 
 import lombok.extern.slf4j.Slf4j;
+import scala.collection.generic.BitOperations.Int;
 
 @Controller
 @RequestMapping("/wechat")
@@ -58,6 +62,9 @@ public class WechatController {
 	
 	@Autowired
 	private WechatAuthService wechatAuthService;
+	
+	@Autowired
+	private RpTransactionMessageService rpTransactionMessageService;
 	
 	/**
 	 * get请求用于服务器连接验证
@@ -180,7 +187,7 @@ public class WechatController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("pageAuth")
+	@RequestMapping("/pageAuth")
 	@ResponseBody
 	public JSONObject pageAuth() throws Exception {
 		log.info("进入微信页面授权");
@@ -196,7 +203,7 @@ public class WechatController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("pageAuthRedirect")
+	@RequestMapping("/pageAuthRedirect")
 	@ResponseBody
 	public String pageAuthRedirect(@RequestParam(name="code") String code,@RequestParam("state") String state) throws Exception {
 		log.info("pageAuthRedirect,code={},state={}",code,state);
@@ -212,4 +219,38 @@ public class WechatController {
 		model.addAttribute("redirectUrl", urlMenu);
 		return "index";
 	}
+	
+	@RequestMapping("/saveMessage")
+	@ResponseBody
+	/**
+	 * 保存发送的信息到数据库
+	 * @param messageBody
+	 * @return
+	 */
+	public String saveMessage(@RequestParam(name="message") String messageBody) {
+		RpTransactionMessage message = new RpTransactionMessage();
+		message.setConsumerQueue("TEST-TOPIC");
+		message.setMessageBody(messageBody);
+		String uuid = UUIDGenerateUtils.generateUUID();
+		message.setId(uuid);
+		message.setMessageId(uuid);
+		int confirm = rpTransactionMessageService.saveMessageWaitingConfirm(message);
+		log.info("save message success,totals = {}",confirm);
+		return "save message success";
+	}
+	
+	@RequestMapping("/sendMessage")
+	@ResponseBody
+	public String sendMessage(@RequestParam(name="messageId") String messageId) {
+		rpTransactionMessageService.confirmAndSendMessage(messageId);
+		return "send message success";
+	}
+	
+	@RequestMapping("/getMessage")
+	@ResponseBody
+	public String getMessage(@RequestParam(name="messageId") String messageId) {
+		RpTransactionMessage rpTransactionMessage = rpTransactionMessageService.getMessageByMessageId(messageId);
+		return JsonMapper.obj2String(rpTransactionMessage);
+	}
+	
 }

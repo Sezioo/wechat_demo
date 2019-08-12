@@ -1,5 +1,9 @@
 package com.sezioo.wechar_demo;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 
 import com.sezioo.wechat_demo.dto.WechatUserInfo;
@@ -22,4 +26,31 @@ public class JsonTest {
 		String path = this.getClass().getResource("/").getPath();
 		System.out.println(path);
 	}
+	
+	@Test
+	public void arrayToStrTest() {
+		String[] strings = {"we","are","one"};
+		String str = Arrays.toString(strings);
+		System.out.println(str);
+	}
+	
+	@Test
+	public void regTest() {
+		String regex = "[^0-9]+";
+		String src = "2019--11-5";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(src);
+		while(matcher.find()) {
+			System.out.println(matcher);
+		}
+	}
+	
+	@Test
+	public void pathTest() {
+		String path = "/222";
+		String[] paths = path.split("/");
+		System.out.println(paths.length);
+		System.out.println(Arrays.deepToString(paths));
+	}
+
 }
