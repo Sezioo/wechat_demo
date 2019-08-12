@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sezioo.wechat_demo.tm.dao.RpNotifyRecordMapper">
+  <resultMap id="BaseResultMap" type="com.sezioo.wechat_demo.tm.entity.RpNotifyRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="notify_rule" jdbcType="VARCHAR" property="notifyRule" />
+    <result column="notify_times" jdbcType="INTEGER" property="notifyTimes" />
+    <result column="limit_notify_times" jdbcType="INTEGER" property="limitNotifyTimes" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="merchant_order_no" jdbcType="VARCHAR" property="merchantOrderNo" />
+    <result column="merchant_no" jdbcType="VARCHAR" property="merchantNo" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="notify_type" jdbcType="VARCHAR" property="notifyType" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sezioo.wechat_demo.data.dao.QRCodeMapper">
+  <resultMap id="BaseResultMap" type="com.sezioo.wechat_demo.data.entity.QRCode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="ticket" jdbcType="VARCHAR" property="ticket" />
+    <result column="validity" jdbcType="TIMESTAMP" property="validity" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="share_times" jdbcType="INTEGER" property="shareTimes" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="open_id" jdbcType="VARCHAR" property="openId" />
+    <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+</mapper>

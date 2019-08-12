@@ -2,7 +2,10 @@ package com.sezioo.wechat_demo.tm.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Table(name = "rp_transaction_message")
 public class RpTransactionMessage implements Serializable {
@@ -61,7 +64,7 @@ public class RpTransactionMessage implements Serializable {
      * 消息重发次数
      */
     @Column(name = "message_send_times")
-    private Short messageSendTimes;
+    private int messageSendTimes;
 
     /**
      * 是否死亡
@@ -269,17 +272,17 @@ public class RpTransactionMessage implements Serializable {
      *
      * @return message_send_times - 消息重发次数
      */
-    public Short getMessageSendTimes() {
+    public int getMessageSendTimes() {
         return messageSendTimes;
     }
 
     /**
      * 设置消息重发次数
      *
-     * @param messageSendTimes 消息重发次数
+     * @param i 消息重发次数
      */
-    public void setMessageSendTimes(Short messageSendTimes) {
-        this.messageSendTimes = messageSendTimes;
+    public void setMessageSendTimes(int i) {
+        this.messageSendTimes = i;
     }
 
     /**
