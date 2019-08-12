@@ -52,7 +52,7 @@ public class WechatAuthService {
 		String key = "user_token_"+userToken.getOpenId();
 		redisUtil.set(key, userToken, userToken.getExpiresIn()*2);
 		log.info("获取到用户TOKEN:{}",userToken);
-		log.info("branch dev");
+		log.info("branch dev test");
 		return userToken;
 	}
 	
