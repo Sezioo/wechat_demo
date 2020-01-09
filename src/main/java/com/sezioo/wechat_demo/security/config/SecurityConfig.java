@@ -1,45 +1,47 @@
 package com.sezioo.wechat_demo.security.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import com.sezioo.wechat_demo.security.auth.MyUserDetailsService;
+import com.sezioo.wechat_demo.security.auth.SmsCodeProvider;
+import com.sezioo.wechat_demo.security.filter.SmsAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 /**
  * @ClassName SecurityConfig
  * @Description TODO
  * @Author qinpeng
- * @Date 2019/8/15 10:01
+ * @Date 2019/9/5 13:47
  * @Version 1.0
  **/
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Component
+public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private AuthenticationFailureHandler authenticationFailureHandler;
+
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .loginPage("/security/requires")
-                .loginProcessingUrl("/authentication/form")
-                .permitAll()
-             .and()
-                .authorizeRequests()
-                .antMatchers("/security/formLogin","/authentication/form").permitAll()
-                .anyRequest()
-                .authenticated()
-             .and()
-                .csrf().disable();
-    }
+    public void configure(HttpSecurity http) throws Exception {
+        SmsAuthenticationFilter smsAuthenticationFilter = new SmsAuthenticationFilter();
+        smsAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        smsAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+        smsAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 
-   /* @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin").password("123456").roles("admin");
-    }*/
+        SmsCodeProvider smsCodeProvider = new SmsCodeProvider();
+        smsCodeProvider.setMyUserDetailsService(myUserDetailsService);
+
+        http.authenticationProvider(smsCodeProvider)
+                .addFilterAfter(smsAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 }

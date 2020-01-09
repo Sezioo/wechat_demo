@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
 import com.sezioo.wechat_demo.dto.WechatUserInfo;
@@ -51,6 +53,19 @@ public class JsonTest {
 		String[] paths = path.split("/");
 		System.out.println(paths.length);
 		System.out.println(Arrays.deepToString(paths));
+	}
+
+	@Test
+	public void randomTest(){
+        String randomNumeric = RandomStringUtils.randomNumeric(6);
+        System.out.println(randomNumeric);
+	}
+
+	@Test
+	public void startStrTest(){
+		String str1 = "/V3.5/api/v1/new/login";
+		String str2 = "/V3.5/api/v1/new/login";
+		System.out.println(str1.startsWith(str2));
 	}
 
 }

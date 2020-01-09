@@ -5,12 +5,46 @@
     <title>登录</title>
 </head>
 <body>
-    <form th:action="@{/authentication/form}">
-        <span>用户名：<input name="username" id="username" /></span>
-        <br/>
-        <span>密&nbsp&nbsp码：<input name="password" id="password" type="password" /></span>
-        <br/>
-        <input type="submit" value="提交">
+    <form th:action="@{/authentication/form}" method="post">
+        <table>
+            <tr>
+                <td>用户名：</td>
+                <td><input name="username" id="username" /></td>
+            </tr><tr>
+                <td>密  码：</td>
+                <td><input name="password" id="password" type="password" /></td>
+            </tr>
+            <tr>
+                <td>验证码：</td>
+                <td><input type="text" name="captchaValidateCode"></td>
+                <td><img src="/security/code/captcha"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input name="remember-me" type="checkbox" value="true"/>记住我</td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="提交"></td>
+            </tr>
+        </table>
+    </form>
+
+    <h3>短信登录</h3>
+
+    <form th:action="@{/authentication/mobile}" method="post">
+        <table>
+            <tr>
+                <td>手机号：</td>
+                <td><input name="mobile" id="mobile" value="13893229822" /></td>
+            </tr>
+            <tr>
+                <td>验证码：</td>
+                <td><input type="text" name="smsValidateCode"></td>
+                <td><button ><a href="/security/code/sms?mobile=13893229822">获取验证码</a></button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="提交"></td>
+            </tr>
+        </table>
     </form>
 </body>
 </html>
