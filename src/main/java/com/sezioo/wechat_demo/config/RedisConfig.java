@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -13,6 +16,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.sezioo.wechat_demo.util.RedisUtil;
 
 import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @PropertySource("classpath:config/redis.properties")
@@ -23,7 +29,10 @@ public class RedisConfig {
     
     @Value("${redis.hostName}")
     private String hostName;
-    
+
+    @Value("${redis.password}")
+    private String password;
+
     @Value("${redis.port}")
     private Integer port;
 
@@ -48,12 +57,14 @@ public class RedisConfig {
     @Value("${redis.testWhileIdle}")
     private boolean testWhileIdle;
 
+    @Value("${redis.timeout}")
+    private Integer timeout;
 
-    /*@Value("${spring.redis.cluster.nodes}")
+    @Value("${spring.redis.cluster.nodes}")
     private String clusterNodes; 
 
     @Value("${spring.redis.cluster.max-redirects}")
-    private Integer mmaxRedirectsac;*/
+    private Integer maxRedirects;
 
     /**
      * JedisPoolConfig 连接池
@@ -90,7 +101,7 @@ public class RedisConfig {
     * @date 2018年2月24日
     * @throws
      */
-    @Bean
+    /*@Bean
     public JedisConnectionFactory JedisConnectionFactory(JedisPoolConfig jedisPoolConfig){
         JedisConnectionFactory JedisConnectionFactory = new JedisConnectionFactory(jedisPoolConfig);
         //连接池  
@@ -98,6 +109,37 @@ public class RedisConfig {
         JedisConnectionFactory.setPort(port);
         JedisConnectionFactory.setDatabase(0);
         return JedisConnectionFactory; 
+    }*/
+
+    @Bean
+    public JedisConnectionFactory jedisConnectionFactory() {
+        //集群模式
+        JedisConnectionFactory  factory = new JedisConnectionFactory(redisClusterConfiguration(),jedisPoolConfig());
+        factory.setDatabase(0);
+        factory.setTimeout(timeout);
+        factory.setUsePool(true);
+        return factory;
+    }
+
+    /**
+     * Redis集群的配置
+     * @return RedisClusterConfiguration
+     * @throws
+     */
+    @Bean
+    public RedisClusterConfiguration redisClusterConfiguration(){
+        RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
+        //Set<RedisNode> clusterNodes
+        String[] serverArray = clusterNodes.split(";");
+        Set<RedisNode> nodes = new HashSet<RedisNode>();
+        for(String ipPort:serverArray){
+            String[] ipAndPort = ipPort.split(":");
+            nodes.add(new RedisNode(ipAndPort[0].trim(),Integer.valueOf(ipAndPort[1])));
+        }
+        redisClusterConfiguration.setClusterNodes(nodes);
+        redisClusterConfiguration.setMaxRedirects(maxRedirects);
+        redisClusterConfiguration.setPassword(RedisPassword.of(password));
+        return redisClusterConfiguration;
     }
 
     /**
